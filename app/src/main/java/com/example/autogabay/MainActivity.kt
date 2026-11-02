@@ -116,9 +116,15 @@ class MainActivity : AppCompatActivity() {
             setBackgroundColor(surfaceColor())
         }
         header.addView(ImageView(this).apply {
-            setImageResource(R.drawable.yeshiva_logo)
+            val darkMode = isDarkMode()
+            setImageResource(if (darkMode) R.drawable.yeshiva_logo_dark else R.drawable.yeshiva_logo)
             contentDescription = "סמל הישיבה"
-            scaleType = ImageView.ScaleType.FIT_CENTER
+            scaleType = ImageView.ScaleType.CENTER_CROP
+            background = android.graphics.drawable.GradientDrawable().apply {
+                shape = android.graphics.drawable.GradientDrawable.OVAL
+                setColor(if (darkMode) android.graphics.Color.TRANSPARENT else android.graphics.Color.WHITE)
+            }
+            clipToOutline = !darkMode
         }, LinearLayout.LayoutParams(dp(48), dp(48)))
         header.addView(TextView(this).apply {
             text = "ניהול תורנויות בישיבה"
@@ -219,7 +225,7 @@ class MainActivity : AppCompatActivity() {
                         setPadding(dp(10), dp(8), dp(10), dp(8))
                     }
                     recordView.addView(TextView(this).apply {
-                        text = "${record.assignmentType.hebrewName()} · ${record.pointsEarned} נקודות"
+                        text = "${record.assignmentType.hebrewName()} · ${record.pointsEarned} נקודות · ${record.timestamp.atZone(java.time.ZoneId.systemDefault()).toLocalDate().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"))}"
                         textSize = 14f
                         setTextColor(secondaryTextColor())
                         textDirection = View.TEXT_DIRECTION_RTL
